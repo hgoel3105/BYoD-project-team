@@ -1,5 +1,12 @@
-#include<stdlib.h>
+#ifndef TABLE_H
+#define TABLE_H
+
 #include "page.h"
-#define number 100
+#define max_pages 100
 //array of pointers to 100 pages
-Page* table[number];
+typedef struct{
+    Page* pages[max_pages];
+    int num_pages; //number of pages in the table
+}Table;
+
+#endif

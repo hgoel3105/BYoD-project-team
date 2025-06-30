@@ -1,9 +1,11 @@
-#include<stdlib.h>
+#ifndef ROW_H
+#define ROW_H
+
 #define MAX 20
 #define code 4
 #define loc 12
 //data of each row 
-struct row{
+typedef struct{
     int ID;//student's ID
     char name[MAX];//student's name
     char branch[code];//student's branch in acronym
@@ -15,3 +17,5 @@ struct row{
     int TA;
     int LIF;
 }Row;
+
+#endif
