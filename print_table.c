@@ -7,9 +7,10 @@
 
 void print_table(Table* table) 
 {
-    //printf("Printing full table:\n");
+    // printf("Printing full table:\n");
 
-    if (table->num_pages == 0) {
+    if (table->num_pages == 0) 
+    {
         printf("Table is empty.\n");
         return;
     }
@@ -29,15 +30,7 @@ void print_table(Table* table)
                            j + 1, row->ID, row->name, row->branch, row->city,
                            row->MTH, row->PHY, row->CHM, row->TA, row->LIF);
                 }
-                else
-                {
-                    printf("  Row %d: [empty]\n", j + 1);
-                }
             }
         } 
-        else 
-        {
-            printf("Page %d: [uninitialized]\n", i + 1);
-        }
     }
 }
