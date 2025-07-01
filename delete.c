@@ -5,6 +5,8 @@
 #include "page.h"
 #include "table.h"
 
+int remove_bit(uint8_t *bitmap, int i);
+
 void delete_row(Table* table, int id) 
 {
     for(int i=0;i<table->num_pages;i++)
@@ -19,6 +21,11 @@ void delete_row(Table* table, int id)
                 {
                     free(row); 
                     
+                    if (remove_bit(page->bitmap, j) == -1) 
+                    {
+                        printf("Error removing bit from bitmap at index %d.\n", j);
+                        return;
+                    }
                     page->row_ptr[j] = NULL; 
                     page->num_rows--; 
 

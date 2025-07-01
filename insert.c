@@ -6,6 +6,9 @@
 #include "page.h"
 #include "table.h"
 
+int set_bit(uint8_t *bitmap, int i);
+int check_bit(uint8_t *bitmap, int i);
+
 int integer_input()
 {
     char buffer[20];
@@ -182,11 +185,11 @@ error:
 
 void find_empty_row(Page *page)
 {
-    for (int i = 0; i < rows_per_page; i++)
+    for (int i=0;i<rows_per_page;i++)
     {
-        if (page->row_ptr[i] == NULL)
+        int bit_status = check_bit(page->bitmap, i);
+        if(bit_status == 0)
         {
-
             Row *new_row = (Row *)malloc(sizeof(Row));
             if (!new_row)
             {
@@ -201,11 +204,45 @@ void find_empty_row(Page *page)
             }
 
             page->row_ptr[i] = new_row;
+            if(set_bit(page->bitmap, i) == -1)
+            {
+                printf("Error setting bit in bitmap.\n");
+                free(new_row);
+                return;
+            }
             page->num_rows++;
             return;
         }
+        else if (bit_status == -1)
+        {
+            printf("Error checking bitmap at index %d.\n", i);
+            return;
+        }
     }
-    printf("No empty row found in the page.\n");
+    // for (int i = 0; i < rows_per_page; i++)
+    // {
+    //     if (page->row_ptr[i] == NULL)
+    //     {
+
+    //         Row *new_row = (Row *)malloc(sizeof(Row));
+    //         if (!new_row)
+    //         {
+    //             printf("Memory allocation failed for new row.\n");
+    //             return;
+    //         }
+
+    //         if (insert_row(new_row) == -1)
+    //         {
+    //             free(new_row);
+    //             return;
+    //         }
+
+    //         page->row_ptr[i] = new_row;
+    //         page->num_rows++;
+    //         return;
+    //     }
+    // }
+    // printf("No empty row found in the page.\n");
 }
 
 void find_empty_page(Table *table)

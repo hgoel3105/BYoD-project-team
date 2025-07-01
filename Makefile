@@ -3,7 +3,7 @@ CC = gcc
 CFLAGS = -Wall -I.
 
 # Source files
-SRCS = main.c insert.c delete.c scan.c print_table.c
+SRCS = main.c insert.c delete.c scan.c print_table.c bitmap.c
 
 # Object files
 OBJS = $(SRCS:.c=.o)
