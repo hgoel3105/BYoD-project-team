@@ -11,4 +11,9 @@ typedef struct{
     int num_rows; //number of rows in the page
 }Page;
 
+// int get_max_rows_per_page() 
+// {
+//     return rows_per_page; 
+// }
+
 #endif

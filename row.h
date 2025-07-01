@@ -1,15 +1,15 @@
 #ifndef ROW_H
 #define ROW_H
 
-#define MAX 20
-#define code 4
-#define loc 12
+#define name_size 20
+#define branch_size 4
+#define loc_size 12
 //data of each row 
 typedef struct{
     int ID;//student's ID
-    char name[MAX];//student's name
-    char branch[code];//student's branch in acronym
-    char city[loc];//studnet's city
+    char name[name_size];//student's name
+    char branch[branch_size];//student's branch in acronym
+    char city[loc_size];//studnet's city
     //marks of the student in different courses
     int MTH;
     int PHY;

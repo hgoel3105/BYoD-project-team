@@ -9,4 +9,8 @@ typedef struct{
     int num_pages; //number of pages in the table
 }Table;
 
+void print_table(Table* table);
+void insert(Table* table);
+void delete_row(Table* table, int id);
+int scan_table(Table* table, int ID);
 #endif
