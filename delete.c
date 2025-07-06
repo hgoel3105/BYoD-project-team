@@ -4,43 +4,35 @@
 #include "row.h"
 #include "page.h"
 #include "table.h"
+#include "index.h"
 
 int remove_bit(uint8_t *bitmap, int i);
 
 void delete_row(Table* table, int id) 
 {
-    for(int i=0;i<table->num_pages;i++)
-    {
-        Page* page = table->pages[i];
-        if (page != NULL) 
-        {
-            for (int j = 0; j < rows_per_page; j++) 
-            {
-                Row* row = page->row_ptr[j];
-                if (row != NULL && row->ID == id) 
-                {
-                    free(row); 
-                    
-                    if (remove_bit(page->bitmap, j) == -1) 
-                    {
-                        printf("Error removing bit from bitmap at index %d.\n", j);
-                        return;
-                    }
-                    page->row_ptr[j] = NULL; 
-                    page->num_rows--; 
-
-                    if(page->num_rows == 0) 
-                    {
-                        free(page); 
-                        table->pages[i] = NULL; 
-                        table->num_pages--; 
-                    }
-
-                    printf("Row with ID %d deleted successfully.\n", id);
-                    return;
-                }
-            }
-        }
+    int page_num, row_num;
+    if(!index_find(id, &page_num, &row_num)){
+        printf("Row with ID %d not found.", id);
+        return;
     }
-    printf("Row with ID %d not found.\n", id);
+    Page* page = table->pages[page_num];
+    if(page == NULL || page->row_ptr[row_num]== NULL){
+        printf("Row with ID %d not found in memory.", id);
+        return;
+    }
+    free(page->row_ptr[row_num]);
+    page->row_ptr[row_num]=NULL;
+
+    if(remove_bit(page->bitmap, row_num)==-1){
+        printf("Error removing bit from bitmap at index %d.\n", row_num);
+        return;
+    }
+    page->num_rows--;
+    if(page->num_rows==0){
+        free(page);
+        table->pages[page_num]=NULL;
+        table->num_pages--;
+    }
+    avl_root=index_delete(avl_root,id);
+    printf("Row with ID %d deleted successfully.\n", id);
 }

@@ -5,6 +5,9 @@
 #include "row.h"
 #include "page.h"
 #include "table.h"
+#include "index.h"
+
+Node* avl_root=NULL;
 
 int set_bit(uint8_t *bitmap, int i);
 int check_bit(uint8_t *bitmap, int i);
@@ -183,7 +186,7 @@ error:
     return 0;
 }
 
-void find_empty_row(Page *page)
+void find_empty_row(Page *page, int page_num)
 {
     for (int i=0;i<rows_per_page;i++)
     {
@@ -210,6 +213,7 @@ void find_empty_row(Page *page)
                 free(new_row);
                 return;
             }
+            index_insert(new_row->ID, page_num,i);
             page->num_rows++;
             return;
         }
@@ -266,13 +270,13 @@ void find_empty_page(Table *table)
             }
             table->num_pages++;
 
-            find_empty_row(table->pages[i]);
+            find_empty_row(table->pages[i],i);
             return;
         }
 
         if (table->pages[i]->num_rows < rows_per_page)
         {
-            find_empty_row(table->pages[i]);
+            find_empty_row(table->pages[i],i);
             return;
         }
     }

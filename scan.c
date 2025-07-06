@@ -4,41 +4,27 @@
 #include "row.h"
 #include "page.h"
 #include "table.h"
-
-int scan_page(Page* page, int ID) 
-{
-    //printf("Scanning page with %d rows:\n", page->num_rows);
-    for (int i = 0; i < rows_per_page; i++) 
-    {
-        Row* row = page->row_ptr[i];
-        if (row != NULL && row->ID == ID) 
-        {
-            printf("Row %d: ID=%d, Name=%s, Branch=%s, City=%s, MTH=%d, PHY=%d, CHM=%d, TA=%d, LIF=%d\n", 
-                   i + 1, row->ID, row->name, row->branch, row->city, 
-                   row->MTH, row->PHY, row->CHM, row->TA, row->LIF);
-            return 1; 
-        }
-    }
-    return 0; // Not found in this page
-}
+#include "index.h"
 
 int scan_table(Table* table, int ID) 
 {
-    //printf("Scanning table with %d pages:\n", table->num_pages);
-    for (int i = 0; i < table->num_pages; i++) 
-    {
-        Page* page = table->pages[i];
-        if (page != NULL) 
-        {
-            //printf("Page %d:\n", i + 1);
-            if (scan_page(page, ID))
-                return 1; // found
-        } 
-        else 
-        {
-            printf("Page %d is empty.\n", i + 1);
-        }
+    int page_num, row_num;
+
+    if (!index_find(ID, &page_num, &row_num)) {
+        printf("Row with ID %d not found in index.\n", ID);
+        return 0;
     }
-    //printf("No row found with ID %d in the table.\n", ID);
-    return 0;
+
+    Page* page = table->pages[page_num];
+    if (page == NULL || page->row_ptr[row_num] == NULL) {
+        printf("Row with ID %d not found in memory.\n", ID);
+        return 0;
+    }
+
+    Row* row = page->row_ptr[row_num];
+    printf("Row Found: ID=%d, Name=%s, Branch=%s, City=%s, MTH=%d, PHY=%d, CHM=%d, TA=%d, LIF=%d\n", 
+           row->ID, row->name, row->branch, row->city, 
+           row->MTH, row->PHY, row->CHM, row->TA, row->LIF);
+
+    return 1;
 }
