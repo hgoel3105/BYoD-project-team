@@ -13,6 +13,7 @@ typedef struct
 {
     uint8_t bitmap[bitmap_size]; 
     Row* row_ptr[rows_per_page];
+    int page_id;
     int num_rows; //number of rows in the page
 }Page;
 
