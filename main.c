@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "table.h"
+#include "wal.h"
 
 void flush_stdin() {
     int c;
@@ -13,11 +14,6 @@ void free_table(Table* table) {
     for (int i = 0; i < max_pages; i++) {
         Page* page = table->pages[i];
         if (page != NULL) {
-            for (int j = 0; j < rows_per_page; j++) {
-                if (page->row_ptr[j] != NULL) {
-                    free(page->row_ptr[j]);
-                }
-            }
             free(page);
         }
     }
@@ -31,10 +27,18 @@ int main()
         fprintf(stderr, "Memory allocation failed for table.\n");
         return EXIT_FAILURE;
     }
-    table->num_pages = 0;
-    for (int i = 0; i < max_pages; i++) {
-        table->pages[i] = NULL;
+    
+    // Initialize disk-based storage
+    if (!table_open(table, "student_data.db", "student_index.db")) {
+        fprintf(stderr, "Failed to open table files.\n");
+        free(table);
+        return EXIT_FAILURE;
     }
+    wal_recover(table);
+    printf("Database opened successfully.\n");
+    printf("Data file: student_data.db\n");
+    printf("Index file: student_index.db\n");
+    printf("Page cache initialized with %d slots.\n", CACHE_SIZE);
     int choice;
     while(1){
         printf("\n1. Insert a new Row\n");
@@ -77,8 +81,13 @@ int main()
                 print_table(table);
                 break;
             case 5:
+                printf("Syncing data to disk...\n");
+                table_sync(table);
+                printf("Closing database...\n");
+                table_close(table);
+                // Print cache statistics
                 printf("Exiting\n");
-                free_table(table);
+                free(table);
                 return 0;
             default:
                 printf("Invalid choice. Please try again.\n");

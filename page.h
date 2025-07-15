@@ -8,11 +8,11 @@
 #define rows_per_page 68
 #define bitmap_size (rows_per_page+7)/8
 
-//array of pointers to each row inserted in a single page
+//array of actual row data in a single page
 typedef struct
 {
     uint8_t bitmap[bitmap_size]; 
-    Row* row_ptr[rows_per_page];
+    Row rows[rows_per_page];  // Store actual Row data, not pointers
     int num_rows; //number of rows in the page
 }Page;
 
