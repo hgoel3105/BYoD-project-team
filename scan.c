@@ -20,7 +20,7 @@ int scan_table(Table* table, int ID)
 
     // Load page if not in memory
     Page* page = table_get_page(table, page_num);
-    if (page == NULL || check_bit(page->bitmap, row_num) == 0) {
+    if (page == NULL) {
         printf("Row with ID %d not found in memory.\n", ID);
         return 0;
     }
